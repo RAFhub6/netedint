@@ -18,8 +18,17 @@ let commands = {
         "value"
      ],
      description: "Create a variable to use"
+    },
+    "echo": {
+      params: [
+        "print",
+        "variable"
+      ],
+      description: "Print text into the terminal or send it to variable"
     }
 }
+package = {}
+npackage = {}
 function checkproc(cvar){
  let cmdvar = cvar
  try {
@@ -30,10 +39,11 @@ function checkproc(cvar){
    if (pkg==undefined){
      console.warn("neted: warn: " + pkg + "is not installed, importing from local packages")
      if (pakg==undefined){
-      console.error("neted: error: local package does not exist")
+      sce = console.error("neted: error: local package does not exist")
       stop
      } else {
         console.log("neted: success: local package imported, use upkg " + param + " function to use module")
+        npackage.pakg = pakg
      }
    } else {
    console.log("neted: success: installed " + param)
@@ -41,15 +51,30 @@ function checkproc(cvar){
   } else if ("upkg" in cmdvar){
     param = cmdvar.replace(/(.*)upkg /,"");
     arg1 = param.split(/(?<=^\S+)\s/)
-    if (arg1 in packages){
-        console.log("neted: success: package found")
+    arg2 = arg1.split(/(?<=^\S+)\s/)
+    if (arg1 in npackages){
+        npackage.arg1.arg2()
     } else {
-      console.error("neted: error: package not found (are you trying to use node packages?)")
+      sce = console.error("neted: error: package not found (are you trying to use node packages?)")
       stop
+    }
+  } else if ("tmp" in cmdvar){
+    param = cmdvar.replace(/(.*)tmp /,"")
+    arg1 = param.split(/(?<=^\S+)\s/)
+    arg2 = arg1.split(/(?<=^\S+)\s/)
+    let arg1
+    arg1.value = arg2
+    console.log()
+  } else if ("echo" in cmdvar){
+    param = cmdvar.replace(/(.*)echo /,"")
+    if ("nof" in param){
+      console.log(param.replace(/(.*)nof/,""))
+    } else {
+    console.log("program: " + param)
     }
   }
  } catch(error) {
-    console.error("neted: error: unrecognizable error")
+    console.error(sce)
     stop
  }
 }
